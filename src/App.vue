@@ -1,91 +1,121 @@
 <script setup>
-import { RouterLink, RouterView } from "vue-router";
-import HelloWorld from "./components/HelloWorld.vue";
+	import { RouterLink, RouterView } from 'vue-router';
+	import { useResultStore } from '@/stores/results';
+
+	const results = useResultStore();
+	results.fill();
+	const cities = ['تهران', 'اصفهان', 'بندرعباس', 'مشهد', 'رشت', 'شیراز'];
+	const filters = ['گرانترین', 'ارزانترین', 'تاریخ صعودی', 'تاریخ نزولی'];
+
+	const dates = ['2024-05-13', '2024-05-12'];
 </script>
 
 <template>
-  <header>
-    <img
-      alt="Vue logo"
-      class="logo"
-      src="@/assets/logo.svg"
-      width="125"
-      height="125"
-    />
+	<header>
+		<div class="w-[1160px] m-auto">
+			<!-- <nav class="">
+				<RouterLink
+					to="/"
+					class="text-5xl"
+					>Homeee</RouterLink
+				>
+				<RouterLink to="/about">About</RouterLink>
+			</nav> -->
+			<div class="w-[1160px] m-auto flex flex-row-reverse my-4 justify-between">
+				<div class="flex flex-row-reverse gap-x-4">
+					<p>:مبدا</p>
+					<select
+						v-on:change="results.filterOrigin($event.target.value)"
+						class="bg-red-100"
+						name="cars"
+						id="cars">
+						<option
+							value="all"
+							selected>
+							همه
+						</option>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+						<option
+							v-for="(item, index) in cities"
+							:key="index"
+							:value="item">
+							{{ item }}
+						</option>
+					</select>
+				</div>
+				<div class="flex flex-row-reverse gap-x-4">
+					<p>:مقصد</p>
+					<select
+						v-on:change="results.filterdestination($event.target.value)"
+						class="bg-red-100"
+						name="cars"
+						id="cars">
+						<option
+							value="all"
+							selected>
+							همه
+						</option>
+						<option
+							v-for="(item, index) in cities"
+							:key="index"
+							:value="item">
+							{{ item }}
+						</option>
+					</select>
+				</div>
+				<div class="flex flex-row-reverse gap-x-4">
+					<p>:تاریخ</p>
+					<select
+						v-on:change="results.filterDate($event.target.value)"
+						class="bg-red-100"
+						name="cars"
+						id="cars">
+						<option
+							value="all"
+							selected>
+							همه
+						</option>
+						<option
+							v-for="(item, index) in dates"
+							:key="index"
+							:value="item">
+							{{ item }}
+						</option>
+					</select>
+				</div>
+				<div class="flex flex-row-reverse gap-x-4">
+					<p>:موجود</p>
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
+					<label class="switch">
+						<input
+							type="checkbox"
+							value="false"
+							@change="results.Avalable($event.target.checked)" />
+						<span class="slider"></span>
+					</label>
+				</div>
+				<div class="flex flex-row-reverse gap-x-4">
+					<p>:مرتب سازی</p>
+					<select
+						class="bg-red-100"
+						name="cars"
+						id="cars">
+						<option
+							value="all"
+							selected>
+							همه
+						</option>
+						<option
+							v-for="(item, index) in filters"
+							:key="index"
+							value="">
+							{{ item }}
+						</option>
+					</select>
+				</div>
+			</div>
+		</div>
+	</header>
 
-  <RouterView />
+	<RouterView />
 </template>
-
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
-</style>
