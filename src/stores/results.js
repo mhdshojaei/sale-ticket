@@ -6,11 +6,11 @@ export const useResultStore = defineStore('result', {
 		return {
 			results: [],
 			filterdItems: [],
-			originCity: '',
+			originCity: 'all',
 			destinationCitiy: '',
 			currentDate: '',
 			date: '',
-			available: false,
+			available: 'all',
 			availablefilters: [],
 		};
 	},
@@ -23,21 +23,13 @@ export const useResultStore = defineStore('result', {
 			this.filterdItems = this.results;
 		},
 		Avalable(value) {
-			if (value) {
-				this.available = true;
-				this.availablefilters = this.filterdItems;
-				this.filterdItems = this.results.filter((item) =>
-					item.is_available == true && this.destinationCitiy
-						? item.destination == this.destinationCitiy
-						: item.is_available == true && this.date
-							? item.date == this.date
-							: item.is_available == true && this.originCity
-								? item.start == this.originCity
-								: item.is_available == true,
-				);
+			if (!value) {
+				this.available = 'all';
+				this.availablefilters = this.customFilter('all', this.originCity);
+				console.log('jk');
 			} else {
-				this.available = false;
-				this.filterdItems = this.availablefilters;
+				this.available = true;
+				this.filterdItems = this.customFilter(true, this.originCity);
 			}
 		},
 		filterOrigin(value) {
@@ -112,6 +104,17 @@ export const useResultStore = defineStore('result', {
 							: item.date == value && this.available
 								? item.is_available == this.available
 								: item.date == value,
+				);
+			}
+		},
+		customFilter(avalable, Origin) {
+			if (avalable == 'all') {
+				return this.results;
+			} else {
+				return this.filterdItems.filter(
+					(item) =>
+						(item.is_available == true && Origin == 'all') ||
+						item.start == 'Origin',
 				);
 			}
 		},

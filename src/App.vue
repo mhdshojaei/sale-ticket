@@ -21,7 +21,7 @@
 				>
 				<RouterLink to="/about">About</RouterLink>
 			</nav> -->
-			<div class="w-[1160px] m-auto flex flex-row-reverse my-4 justify-between">
+			<!-- <div class="w-[1160px] m-auto flex flex-row-reverse my-4 justify-between">
 				<div class="flex flex-row-reverse gap-x-4">
 					<p>:مبدا</p>
 					<select
@@ -113,7 +113,7 @@
 						</option>
 					</select>
 				</div>
-			</div>
+			</div> -->
 		</div>
 	</header>
 
