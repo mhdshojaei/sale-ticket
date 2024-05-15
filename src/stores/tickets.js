@@ -1,8 +1,8 @@
-// tickets.js
-import { reactive } from 'vue';
+import { defineStore } from 'pinia';
+import { ref, computed } from 'vue';
 
-const state = reactive({
-	results: [
+export const useTicketsStore = defineStore('tickets', () => {
+	const results = ref([
 		{
 			id: 1,
 			ticket_number: 23212,
@@ -11,7 +11,7 @@ const state = reactive({
 			date: '2024-05-12',
 			available_seats: 9,
 			is_available: true,
-			price: 200000,
+			price: 60000,
 		},
 		{
 			id: 2,
@@ -21,7 +21,7 @@ const state = reactive({
 			date: '2024-05-13',
 			available_seats: 2,
 			is_available: true,
-			price: 180000,
+			price: 120000,
 		},
 		{
 			id: 3,
@@ -31,7 +31,7 @@ const state = reactive({
 			date: '2024-05-12',
 			available_seats: 0,
 			is_available: false,
-			price: 150000,
+			price: 45000,
 		},
 		{
 			id: 4,
@@ -41,7 +41,7 @@ const state = reactive({
 			date: '2024-05-12',
 			available_seats: 22,
 			is_available: true,
-			price: 250000,
+			price: 3000,
 		},
 		{
 			id: 5,
@@ -51,7 +51,7 @@ const state = reactive({
 			date: '2024-05-12',
 			available_seats: 0,
 			is_available: false,
-			price: 220000,
+			price: 24000,
 		},
 		{
 			id: 6,
@@ -61,30 +61,47 @@ const state = reactive({
 			date: '2024-05-13',
 			available_seats: 0,
 			is_available: false,
-			price: 180000,
+			price: 50000,
 		},
-	],
-	cartItems: [],
-});
+	]);
 
-export const useTicketsStore = () => ({
-	results: state.results,
-	maxPrice: Math.max(...state.results.map((item) => item.price)),
-	minPrice: Math.min(...state.results.map((item) => item.price)),
-	cartItems: state.cartItems,
-	totalPrice: state.cartItems.reduce((total, item) => total + item.price, 0),
-	addToCart(itemId) {
-		const itemToAdd = state.results.find((item) => item.id === itemId);
-		if (itemToAdd) {
-			state.cartItems.push(itemToAdd);
-		}
-	},
-	removeFromCart(itemId) {
-		const indexToRemove = state.cartItems.findIndex(
-			(item) => item.id === itemId,
+	const cart = ref([]);
+
+	const addToCart = (ticket) => {
+		cart.value.push(ticket);
+	};
+
+	const removeFromCart = (ticketId) => {
+		cart.value = cart.value.filter((item) => item.id !== ticketId);
+	};
+
+	const maxPrice = computed(() => {
+		return Math.max(...results.value.map((ticket) => ticket.price));
+	});
+
+	const minPrice = computed(() => {
+		return Math.min(...results.value.map((ticket) => ticket.price));
+	});
+
+	const cartItems = computed(() => {
+		return cart.value;
+	});
+
+	const totalPrice = computed(() => {
+		return cart.value.reduce(
+			(sum, item) => sum + item.price * item.passengers.length,
+			0,
 		);
-		if (indexToRemove !== -1) {
-			state.cartItems.splice(indexToRemove, 1);
-		}
-	},
+	});
+
+	return {
+		results,
+		cart,
+		addToCart,
+		removeFromCart,
+		maxPrice,
+		minPrice,
+		cartItems,
+		totalPrice,
+	};
 });

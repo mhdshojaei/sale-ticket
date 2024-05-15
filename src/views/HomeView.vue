@@ -13,12 +13,12 @@
 					v-model="filter.start"
 					class="block border border-gray-300 rounded px-4 py-2 w-64 focus:outline-none focus:border-blue-500">
 					<option value="">همه</option>
-					<option value="تهران">تهران</option>
-					<option value="مشهد">مشهد</option>
-					<option value="اصفهان">اصفهان</option>
-					<option value="بندرعباس">بندرعباس</option>
-					<option value="شیراز">شیراز</option>
-					<option value="رشت">رشت</option>
+					<option
+						v-for="option in uniqueStarts"
+						:key="option"
+						:value="option">
+						{{ option }}
+					</option>
 				</select>
 			</div>
 			<div>
@@ -32,13 +32,12 @@
 					v-model="filter.destination"
 					class="block border border-gray-300 rounded px-4 py-2 w-64 focus:outline-none focus:border-blue-500">
 					<option value="">همه</option>
-
-					<option value="تهران">تهران</option>
-					<option value="مشهد">مشهد</option>
-					<option value="اصفهان">اصفهان</option>
-					<option value="بندرعباس">بندرعباس</option>
-					<option value="شیراز">شیراز</option>
-					<option value="رشت">رشت</option>
+					<option
+						v-for="option in uniqueDestinations"
+						:key="option"
+						:value="option">
+						{{ option }}
+					</option>
 				</select>
 			</div>
 			<div>
@@ -52,8 +51,12 @@
 					v-model="dateFilter"
 					class="block border border-gray-300 rounded px-4 py-2 w-64 focus:outline-none focus:border-blue-500">
 					<option value="">همه</option>
-					<option value="2024-05-12">2024-05-12</option>
-					<option value="2024-05-13">2024-05-13</option>
+					<option
+						v-for="option in uniqueDates"
+						:key="option"
+						:value="option">
+						{{ option }}
+					</option>
 				</select>
 			</div>
 			<div>
@@ -110,31 +113,95 @@
 			<p>موجود : {{ result.is_available ? 'بله' : 'خیر' }}</p>
 			<p>قیمت: {{ result.price }} تومان</p>
 			<button
-				@click="addToCart(result.id)"
+				v-if="result.is_available"
+				@click="openReserveModal(result)"
 				class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
-				اضافه به سبد خرید
+				رزرو بلیط
+			</button>
+			<button
+				v-else
+				disabled
+				class="bg-red-500 text-white px-4 py-2 rounded">
+				تکمیل ظرفیت
 			</button>
 		</div>
-		<div>
-			<p>گرانترین قیمت: {{ maxPrice }}</p>
-			<p>ارزانترین قیمت: {{ minPrice }}</p>
+		<div
+			v-if="showReserveModal"
+			class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75">
+			<div class="bg-white p-4 rounded w-1/2">
+				<h2 class="text-xl font-bold mb-4">رزرو بلیط</h2>
+				<div
+					v-for="(passenger, index) in passengers"
+					:key="index"
+					class="mb-4 flex gap-4">
+					<input
+						v-model="passenger.name"
+						type="text"
+						placeholder="نام"
+						class="block border border-gray-300 rounded px-4 py-2 w-full mb-2" />
+					<input
+						v-model="passenger.natinalId"
+						type="number"
+						placeholder="کدملی"
+						class="block border border-gray-300 rounded px-4 py-2 w-full mb-2" />
+				</div>
+				<div class="flex gap-8 align-middle justify-center">
+					<button
+						@click="addPassenger"
+						class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+						اضافه کردن مسافر
+					</button>
+					<button
+						@click="reserveTicket"
+						:disabled="!canReserve"
+						:class="
+							canReserve
+								? 'mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600'
+								: 'mt-4 bg-red-500 text-white px-4 py-2 rounded '
+						">
+						افزودن به سبد خرید
+					</button>
+					<button
+						@click="closeReserveModal"
+						class="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+						بستن
+					</button>
+				</div>
+			</div>
 		</div>
 		<div
 			v-if="showCartModal"
 			class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75">
-			<div class="bg-white p-4 rounded w-1/2">
+			<div class="bg-white p-4 rounded w-2/3">
 				<h2 class="text-xl font-bold mb-4">سبد خرید</h2>
 				<ul>
 					<li
 						v-for="item in cartItems"
 						:key="item.id"
 						class="mb-2">
-						{{ item.ticket_number }} - {{ item.price }} تومان
-						<button
-							@click="removeFromCart(item.id)"
-							class="text-red-500 ml-2">
-							حذف
-						</button>
+						<div class="w-full flex border justify-between items-center p-4">
+							<div class="flex flex-col gap-4">
+								<div
+									:key="passenger.name"
+									v-for="passenger in item.passengers">
+									<p>نام مسافر: {{ passenger.name }}</p>
+									<p>شماره ملی مسافر: {{ passenger.natinalId }}</p>
+								</div>
+							</div>
+							<p>مبدا: {{ item.start }}</p>
+							<p>مقصد: {{ item.destination }}</p>
+							<p>شماره بلیط:{{ item.ticket_number }}</p>
+							<p>قیمت هر بلیط: {{ item.price }} تومان</p>
+							<p>
+								مجموع قیمت: {{ item.passengers.length * Number(item.price) }}
+							</p>
+
+							<button
+								@click="removeFromCart(item.id)"
+								class="text-red-500 ml-2">
+								حذف
+							</button>
+						</div>
 					</li>
 				</ul>
 				<p class="font-bold mt-4">مجموع: {{ totalPrice }} تومان</p>
@@ -169,6 +236,10 @@
 			const sortType = ref('');
 
 			const showCartModal = ref(false);
+			const showReserveModal = ref(false);
+
+			const selectedTicket = ref(null);
+			const passengers = ref([{ name: '', natinalId: '' }]);
 
 			const openCartModal = () => {
 				showCartModal.value = true;
@@ -176,6 +247,30 @@
 
 			const closeCartModal = () => {
 				showCartModal.value = false;
+			};
+
+			const openReserveModal = (ticket) => {
+				selectedTicket.value = ticket;
+				showReserveModal.value = true;
+			};
+
+			const closeReserveModal = () => {
+				showReserveModal.value = false;
+				passengers.value = [{ name: '', natinalId: '' }];
+			};
+
+			const addPassenger = () => {
+				passengers.value.push({ name: '', natinalId: '' });
+			};
+
+			const reserveTicket = () => {
+				ticketsStore.addToCart({
+					...selectedTicket.value,
+					passengers: passengers.value,
+				});
+				console.log(cartItems.value);
+
+				closeReserveModal();
 			};
 
 			const addToCart = (itemId) => {
@@ -238,6 +333,26 @@
 				return ticketsStore.totalPrice;
 			});
 
+			const canReserve = computed(() => {
+				return passengers.value.every(
+					(passenger) => passenger.name && passenger.natinalId,
+				);
+			});
+
+			const uniqueStarts = computed(() => {
+				return [...new Set(ticketsStore.results.map((ticket) => ticket.start))];
+			});
+
+			const uniqueDestinations = computed(() => {
+				return [
+					...new Set(ticketsStore.results.map((ticket) => ticket.destination)),
+				];
+			});
+
+			const uniqueDates = computed(() => {
+				return [...new Set(ticketsStore.results.map((ticket) => ticket.date))];
+			});
+
 			return {
 				filter,
 				dateFilter,
@@ -252,6 +367,16 @@
 				minPrice,
 				cartItems,
 				totalPrice,
+				openReserveModal,
+				closeReserveModal,
+				passengers,
+				addPassenger,
+				reserveTicket,
+				canReserve,
+				uniqueStarts,
+				uniqueDestinations,
+				uniqueDates,
+				showReserveModal,
 			};
 		},
 	};

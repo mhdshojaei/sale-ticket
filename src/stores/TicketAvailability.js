@@ -1,44 +1,26 @@
-// TicketAvailability.js
-import { reactive } from 'vue';
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
-const state = reactive({
-	tickets: [
-		{
-			id: 1,
-			ticket_number: 23212,
-			is_available: true,
-		},
-		{
-			id: 2,
-			ticket_number: 72632,
-			is_available: true,
-		},
-		{
-			id: 3,
-			ticket_number: 53728,
-			is_available: false,
-		},
-		{
-			id: 4,
-			ticket_number: 92738,
-			is_available: true,
-		},
-		{
-			id: 5,
-			ticket_number: 73097,
-			is_available: false,
-		},
-		{
-			id: 6,
-			ticket_number: 68902,
-			is_available: false,
-		},
-	],
-});
+export const useTicketAvailabilityStore = defineStore(
+	'TicketAvailability',
+	() => {
+		const availability = ref([
+			{ id: 1, available: true },
+			{ id: 2, available: true },
+			{ id: 3, available: false },
+			{ id: 4, available: true },
+			{ id: 5, available: false },
+			{ id: 6, available: false },
+		]);
 
-export const useTicketAvailabilityStore = () => ({
-	getAvailability(ticketId) {
-		const ticket = state.tickets.find((t) => t.id === ticketId);
-		return ticket ? ticket.is_available : false;
+		const getAvailability = (id) => {
+			const ticket = availability.value.find((item) => item.id === id);
+			return ticket ? ticket.available : false;
+		};
+
+		return {
+			availability,
+			getAvailability,
+		};
 	},
-});
+);
