@@ -71,68 +71,15 @@ export const useTicketsStore = defineStore('tickets', {
 			showPassengerModal: ref(false),
 			selectedTicket: ref(null),
 			showReserveModal: ref(false),
-			filter: ref({
-				start: '',
-				destination: '',
-				availability: '',
-			}),
-			dateFilter: ref(''),
-			sortType: ref(''),
-			availability: ref([
-				{ id: 1, available: true },
-				{ id: 2, available: true },
-				{ id: 3, available: false },
-				{ id: 4, available: true },
-				{ id: 5, available: false },
-				{ id: 6, available: false },
-			]),
 		};
 	},
-	getters: {
-		filteredResults() {
-			let filtered = this.results;
 
-			if (this.filter.start !== '') {
-				filtered = filtered.filter((item) => item.start === this.filter.start);
-			}
-
-			if (this.filter.destination !== '') {
-				filtered = filtered.filter(
-					(item) => item.destination === this.filter.destination,
-				);
-			}
-
-			if (this.filter.availability !== '') {
-				filtered = filtered.filter(
-					(item) =>
-						this.getAvailability(item.id).toString() ===
-						this.filter.availability,
-				);
-			}
-
-			if (this.dateFilter !== '') {
-				filtered = filtered.filter((item) => item.date === this.dateFilter);
-			}
-
-			if (this.sortType === 'price-asc') {
-				filtered.sort((a, b) => a.price - b.price);
-			} else if (this.sortType === 'price-desc') {
-				filtered.sort((a, b) => b.price - a.price);
-			}
-
-			return filtered;
-		},
-	},
 	actions: {
-		getAvailability(id) {
-			const ticket = this.availability.find((item) => item.id === id);
-			return ticket ? ticket.available : false;
-		},
 		addToCart(ticket) {
 			this.cart.push(ticket);
 		},
-		removeFromCart(ticketId) {
-			this.cart = this.cart.filter((item) => item.id !== ticketId);
+		removeFromCart(index) {
+			this.cart.splice(index, 1);
 		},
 		maxPrice() {
 			return Math.max(...results.value.map((ticket) => ticket.price));

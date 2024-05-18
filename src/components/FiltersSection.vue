@@ -1,7 +1,11 @@
 <script setup>
 	import { computed, ref } from 'vue';
 	import { useTicketsStore } from '@/stores/tickets';
+	import { useRouter } from 'vue-router';
 
+	const props = defineProps({
+		filter: Object,
+	});
 	const ticketsStore = useTicketsStore();
 
 	const openCartModal = () => {
@@ -21,6 +25,18 @@
 	const uniqueDates = computed(() => {
 		return [...new Set(ticketsStore.results.map((ticket) => ticket.date))];
 	});
+	const router = useRouter();
+	const updateFilters = () => {
+		router.push({
+			query: {
+				start: props.filter.start,
+				destination: props.filter.destination,
+				date: props.filter.dateFilter,
+				availability: props.filter.availability,
+				sortType: props.filter.sortType,
+			},
+		});
+	};
 </script>
 <template>
 	<div class="flex space-x-4 mb-4 justify-between items-center">
@@ -32,7 +48,8 @@
 			>
 			<select
 				id="start"
-				v-model="ticketsStore.filter.start"
+				v-model="props.filter.start"
+				@change="updateFilters"
 				class="block border border-gray-300 rounded px-4 py-2 w-64 focus:outline-none focus:border-blue-500">
 				<option value="">همه</option>
 				<option
@@ -51,7 +68,8 @@
 			>
 			<select
 				id="destination"
-				v-model="ticketsStore.filter.destination"
+				v-model="props.filter.destination"
+				@change="updateFilters"
 				class="block border border-gray-300 rounded px-4 py-2 w-64 focus:outline-none focus:border-blue-500">
 				<option value="">همه</option>
 				<option
@@ -70,7 +88,8 @@
 			>
 			<select
 				id="date"
-				v-model="ticketsStore.dateFilter"
+				v-model="props.filter.dateFilter"
+				@change="updateFilters"
 				class="block border border-gray-300 rounded px-4 py-2 w-64 focus:outline-none focus:border-blue-500">
 				<option value="">همه</option>
 				<option
@@ -89,7 +108,8 @@
 			>
 			<select
 				id="availability"
-				v-model="ticketsStore.filter.availability"
+				v-model="props.filter.availability"
+				@change="updateFilters"
 				class="block border border-gray-300 rounded px-4 py-2 w-64 focus:outline-none focus:border-blue-500">
 				<option value="">همه</option>
 				<option value="true">بله</option>
@@ -104,7 +124,8 @@
 			>
 			<select
 				id="sort"
-				v-model="sortType"
+				v-model="props.filter.sortType"
+				@change="updateFilters"
 				class="block border border-gray-300 rounded px-4 py-2 w-64 focus:outline-none focus:border-blue-500">
 				<option value="price-asc">قیمت ارزان به گران</option>
 				<option value="price-desc">قیمت گران به ارزان</option>

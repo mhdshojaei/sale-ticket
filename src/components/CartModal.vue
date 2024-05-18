@@ -29,7 +29,7 @@
 			<h2 class="text-xl font-bold mb-4">سبد خرید</h2>
 			<ul>
 				<li
-					v-for="item in cartItems"
+					v-for="(item, index) in cartItems"
 					:key="item.id"
 					class="mb-2">
 					<div class="w-full flex border justify-between items-center p-4">
@@ -48,16 +48,18 @@
 						<p>مجموع قیمت: {{ item.passengers.length * Number(item.price) }}</p>
 
 						<button
-							@click="removeFromCart(item.id)"
+							@click="removeFromCart(index)"
 							class="text-red-500 ml-2">
 							حذف
 						</button>
 					</div>
 				</li>
 			</ul>
-			<p class="font-bold mt-4">مجموع: {{ totalPrice }} تومان</p>
+			<p class="font-bold mt-4">
+				مجموع: {{ Intl.NumberFormat().format(totalPrice) }} تومان
+			</p>
 			<button
-				@click="ticketsStore.closeCartModal"
+				@click="closeCartModal"
 				class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
 				بستن
 			</button>

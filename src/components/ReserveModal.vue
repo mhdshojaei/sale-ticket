@@ -16,6 +16,14 @@
 	const resetPassengersValue = () => {
 		passengers.value = [{ name: '', natinalId: '' }];
 	};
+
+	const reserveTicket = () => {
+		ticketsStore.reserveTicket(passengers.value);
+		resetPassengersValue();
+	};
+	const deleteItem = (index) => {
+		passengers.value.splice(index, 1);
+	};
 </script>
 <template>
 	<div
@@ -37,6 +45,12 @@
 					type="number"
 					placeholder="کدملی"
 					class="block border border-gray-300 rounded px-4 py-2 w-full mb-2" />
+				<button
+					v-if="index !== 0"
+					class="bg-red-500 text-white"
+					@click="deleteItem(index)">
+					Delete
+				</button>
 			</div>
 			<div class="flex gap-8 align-middle justify-center">
 				<button
@@ -45,9 +59,7 @@
 					اضافه کردن مسافر
 				</button>
 				<button
-					@click="
-						ticketsStore.reserveTicket(passengers), resetPassengersValue()
-					"
+					@click="reserveTicket()"
 					:disabled="!canReserve"
 					:class="
 						canReserve
