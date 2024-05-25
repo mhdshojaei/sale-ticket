@@ -15,6 +15,12 @@
 	const removeFromCart = (itemId) => {
 		ticketsStore.removeFromCart(itemId);
 	};
+	const editCart = (itemId) => {
+		ticketsStore.editCart(itemId);
+	};
+	const pay = () => {
+		ticketsStore.pay();
+	};
 
 	const closeCartModal = () => {
 		ticketsStore.closeCartModal();
@@ -46,7 +52,11 @@
 						<p>شماره بلیط:{{ item.ticket_number }}</p>
 						<p>قیمت هر بلیط: {{ item.price }} تومان</p>
 						<p>مجموع قیمت: {{ item.passengers.length * Number(item.price) }}</p>
-
+						<button
+							@click="editCart(item)"
+							class="text-gray-500 ml-2">
+							ویرایش
+						</button>
 						<button
 							@click="removeFromCart(index)"
 							class="text-red-500 ml-2">
@@ -55,14 +65,26 @@
 					</div>
 				</li>
 			</ul>
-			<p class="font-bold mt-4">
+			<p
+				v-if="cartItems.length"
+				class="font-bold mt-4">
 				مجموع: {{ Intl.NumberFormat().format(totalPrice) }} تومان
 			</p>
-			<button
-				@click="closeCartModal"
-				class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-				بستن
-			</button>
+			<p v-else>موردی یافت نشد</p>
+			<div class="flex justify-end gap-4">
+				<button
+					v-if="cartItems"
+					@click="pay"
+					:disabled="!cartItems.length"
+					class="mt-4 w-28 bg-green-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-red-500">
+					پرداخت
+				</button>
+				<button
+					@click="closeCartModal"
+					class="mt-4 w-28 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+					بستن
+				</button>
+			</div>
 		</div>
 	</div>
 </template>
