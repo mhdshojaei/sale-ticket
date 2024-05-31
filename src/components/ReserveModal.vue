@@ -33,14 +33,14 @@
 <template>
 	<div
 		v-if="ticketsStore.showReserveModal"
-		class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75">
+		class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-20">
 		<div class="bg-white p-4 rounded w-1/2">
 			<h2 class="text-xl font-bold mb-4">رزرو بلیط</h2>
 
 			<div
 				v-for="(passenger, index) in ticketsStore.passengers"
 				:key="index"
-				class="mb-4 flex gap-4 justify-between">
+				class="mb-4 flex flex-col md:flex-row gap-4 justify-between">
 				<input
 					v-model="passenger.name"
 					type="text"
@@ -62,7 +62,8 @@
 					حذف
 				</button>
 			</div>
-			<div class="flex gap-8 align-middle justify-center">
+			<div
+				class="flex flex-col md:flex-row gap-2 md:gap-8 align-middle justify-center">
 				<button
 					:disabled="
 						ticketsStore.selectedTicket.available_seats ==

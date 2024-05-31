@@ -30,7 +30,7 @@
 <template>
 	<div
 		v-if="ticketsStore.showCartModal"
-		class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75">
+		class="fixed inset-0 flex flex-col md:flex-row items-center justify-center bg-gray-800 bg-opacity-75 z-20">
 		<div class="bg-white p-4 rounded w-2/3">
 			<h2 class="text-xl font-bold mb-4">سبد خرید</h2>
 			<ul>
@@ -38,7 +38,8 @@
 					v-for="(item, index) in cartItems"
 					:key="item.id"
 					class="mb-2">
-					<div class="w-full flex border justify-between items-center p-4">
+					<div
+						class="w-full flex flex-col md:flex-row gap-2 border justify-between items-center p-4">
 						<div class="flex flex-col gap-4">
 							<div
 								:key="passenger.name"
@@ -54,12 +55,12 @@
 						<p>مجموع قیمت: {{ item.passengers.length * Number(item.price) }}</p>
 						<button
 							@click="editCart(item)"
-							class="text-gray-500 ml-2">
+							class="text-white rounded-lg py-2 px-4 ml-2 bg-gray-500">
 							ویرایش
 						</button>
 						<button
 							@click="removeFromCart(index)"
-							class="text-red-500 ml-2">
+							class="text-white bg-red-500 ml-2 rounded-lg py-2 px-4">
 							حذف
 						</button>
 					</div>
